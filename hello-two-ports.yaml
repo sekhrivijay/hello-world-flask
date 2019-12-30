@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hello
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello
+  labels:
+    app: hello
+spec:
+  ports:
+  - name: http-web
+    port: 80
+    targetPort: 8080
+  - name: https-web
+    port: 443
+    targetPort: 8443
+
+  selector:
+    app: hello
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: hello
+        version: v1
+    spec:
+      serviceAccountName: hello
+      containers:
+      - image: docker.io/sekhrivijay/hello-world-flask:latest
+        imagePullPolicy: Always
+        name: hello-https
+        env:
+        - name: PORT
+          value: "8443"
+        - name: HTTPS
+          value: True
+
+        ports:
+        - containerPort: 8443
+
+      - image: docker.io/sekhrivijay/hello-world-flask:latest
+        imagePullPolicy: Always
+        name: hello-http
+        env:
+        - name: PORT
+          value: "8080"
+
+        ports:
+        - containerPort: 8080
+
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: hello
+spec:
+  hosts:
+  - "hello"
+  http: 
+  - fault:
+      abort:
+        percentage:
+          value: 100.0
+        httpStatus: 500
+
+    route:
+    - destination:
+        host: hello
+        #port:
+        #  number: 80
+  - route:
+    - destination:
+        host: hello
+        #port:
+        #  number: 80
