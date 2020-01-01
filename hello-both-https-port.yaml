@@ -13,10 +13,10 @@ metadata:
     app: hello
 spec:
   ports:
-  - name: http-web
-    port: 80
-    targetPort: 8080
-    protocol: TCP
+  - name: https-web
+    port: 443
+    targetPort: 8443
+    #protocol: TCP
 
   selector:
     app: hello
@@ -81,17 +81,17 @@ spec:
       containers:
       - image: docker.io/sekhrivijay/hello-world-flask:latest
         imagePullPolicy: Always
-        name: hello-http1
+        name: hello-https1
         env:
         - name: PORT
-          value: "8080"
+          value: "8443"
         - name: HTTPS
-          value: "False"
+          value: "True"
         - name: VERSION
           value: v1
         ports:
-        - containerPort: 8080
-          name: http-web
+        - containerPort: 8443
+          name: https-web
 
 
 ---
@@ -115,17 +115,17 @@ spec:
       containers:
       - image: docker.io/sekhrivijay/hello-world-flask:latest
         imagePullPolicy: Always
-        name: hello-http2
+        name: hello-https2
         env:
         - name: PORT
-          value: "8080"
+          value: "8443"
         - name: HTTPS
-          value: "False"
+          value: "True"
         - name: VERSION
           value: v2
         ports:
-        - containerPort: 8080
-          name: http-web
+        - containerPort: 8443
+          name: https-web
 
 
 
