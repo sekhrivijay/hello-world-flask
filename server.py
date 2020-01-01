@@ -12,8 +12,11 @@ def hello():
 
 if __name__ == "__main__":
         port = int(os.environ.get("PORT", 8080))
-        httpsEnabled = os.environ.get("HTTPS", False)
-        if httpsEnabled:
-            app.run(debug=True,host='0.0.0.0',port=port, ssl_context='adhoc')
-        app.run(debug=True,host='0.0.0.0',port=port)
+        httpsEnabled = os.environ.get("HTTPS", "False")
+
+        if httpsEnabled == "True":
+            print ("https is enabled ....", httpsEnabled)
+            app.run(debug=True, host='0.0.0.0', port=port, ssl_context='adhoc')
+        print ("https is disabled ....", httpsEnabled)
+        app.run(debug=True, host='0.0.0.0', port=port)
 	
